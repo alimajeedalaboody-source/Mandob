@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>المندوب الذكي - بريميوم</title>
+<style>
+/* --- تصميم عصري وحصري (Premium UI) --- */
+:root {
+    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    --bg-color: #f3f4f6;
+    --card-surface: #ffffff;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning-bg: #fffbeb;
+    --warning-border: #fcd34d;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025);
+    --radius: 16px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background-color: var(--bg-color); color: var(--text-primary); padding-bottom: 90px; }
+
+.container { max-width: 500px; margin: 0 auto; padding: 20px; }
+
+/* الهيدر */
+header { margin-bottom: 25px; text-align: center; }
+h2 { margin: 0; font-size: 1.8rem; font-weight: 900; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+.date-badge { display: inline-block; background: #e0e7ff; color: #4338ca; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-top: 8px; }
+
+/* البطاقات (Cards) */
+.card { background: var(--card-surface); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow-lg); border: 1px solid rgba(255,255,255,0.5); margin-bottom: 16px; transition: transform 0.2s; }
+.card:active { transform: scale(0.99); }
+
+/* الإحصائيات */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.stat-box { padding: 16px; border-radius: 20px; text-align: center; color: white; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.stat-box::before { content:''; position: absolute; top:-50%; left:-50%; width:200%; height:200%; background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%); }
+.stat-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+.stat-blue { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+.stat-val { font-size: 1.4rem; font-weight: 800; margin-top: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+/* المدخلات والأزرار */
+.input-wrapper { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 14px; padding: 4px; display: flex; gap: 8px; margin-bottom: 12px; transition: 0.3s; }
+.input-wrapper:focus-within { border-color: #6366f1; background: white; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+input { border: none; background: transparent; width: 100%; padding: 10px; font-size: 1rem; font-weight: bold; color: #374151; }
+
+.btn-scan { background: #1f2937; color: white; width: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.btn-main { background: var(--primary-gradient); color: white; width: 100%; padding: 16px; border-radius: 18px; border: none; font-size: 1rem; font-weight: bold; box-shadow: 0 8px 20px -4px rgba(79, 70, 229, 0.4); margin-top: 10px; cursor: pointer; }
+
+/* قائمة الطلبات */
+.logs-container { background: white; border-radius: 24px; overflow: hidden; box-shadow: var(--shadow-lg); }
+.log-header { background: #f8fafc; padding: 15px 20px; font-weight: bold; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+.log-item { padding: 16px 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; animation: slideUp 0.3s ease-out; }
+@keyframes slideUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+/* تمييز المعدل */
+.log-item.edited { background-color: var(--warning-bg); border-left: 4px solid var(--warning-border); }
+
+.item-info h4 { margin: 0; font-size: 0.95rem; color: #1f2937; }
+.item-info p { margin: 4px 0 0; font-size: 0.8rem; color: #6b7280; }
+.price-box { text-align: left; }
+.price-main { font-weight: 800; font-size: 1.1rem; color: #059669; }
+.price-old { text-decoration: line-through; color: #9ca3af; font-size: 0.75rem; display: block; }
+.badge-edit { font-size: 0.6rem; background: #fcd34d; color: #78350f; padding: 2px 6px; border-radius: 4px; margin-right: 5px; vertical-align: middle; }
+
+/* أزرار الإجراءات (تعديل وحذف) */
+.actions { display: flex; gap: 8px; margin-top: 6px; }
+.action-btn { padding: 6px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; border: none; }
+.btn-edit { background: #e0e7ff; color: #4338ca; }
+.btn-delete { background: #fee2e2; color: #b91c1c; }
+
+/* النوافذ المنبثقة */
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+.modal.active { opacity: 1; pointer-events: auto; }
+.modal-box { background: white; width: 90%; max-width: 340px; border-radius: 24px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); transform: scale(0.9); transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.modal.active .modal-box { transform: scale(1); }
+
+/* أيقونات */
+svg { width: 20px; height: 20px; stroke-width: 2; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.hidden { display: none !important; }
+
+/* الكاميرا */
+.scanner-view { position: relative; width: 100%; height: 280px; background: black; border-radius: 16px; overflow: hidden; margin-bottom: 15px; }
+video { width: 100%; height: 100%; object-fit: cover; }
+.scan-overlay { position: absolute; inset: 0; border: 2px solid rgba(255,255,255,0.3); border-radius: 16px; }
+.scan-line { position: absolute; width: 80%; height: 2px; background: #ef4444; left: 10%; top: 50%; box-shadow: 0 0 10px #ef4444; animation: scanAnim 2s infinite; }
+@keyframes scanAnim { 0%,100% { top: 20%; opacity: 0; } 50% { top: 80%; opacity: 1; } }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h2>المندوب الذكي</h2>
+        <span class="date-badge" id="current-date">--</span>
+    </header>
+
+    <div class="stats-grid">
+        <div class="stat-box stat-green">
+            <div style="opacity:0.9; font-size:0.8rem">إجمالي المُحصّل</div>
+            <div class="stat-val" id="total-collected">0</div>
+        </div>
+        <div class="stat-box stat-blue">
+            <div style="opacity:0.9; font-size:0.8rem">صافي الدخل</div>
+            <div class="stat-val" id="total-net">0</div>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button onclick="openCalendar()" style="flex:1; background:white; color:#4b5563; border:1px solid #e5e7eb; padding:12px; border-radius:12px; font-weight:bold;">📅 السجل</button>
+        <button onclick="startNewDay()" style="flex:1; background:#fee2e2; color:#b91c1c; border:none; padding:12px; border-radius:12px; font-weight:bold;">⚡ يوم جديد</button>
+    </div>
+
+    <div class="card">
+        <form id="delivery-form">
+            <div class="input-wrapper">
+                <input type="text" id="inp-receipt" placeholder="رقم الوصل" required style="text-align:right">
+                <div class="btn-scan" onclick="startScanner()">
+                    <svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
+                </div>
+            </div>
+            <div class="input-wrapper">
+                <input type="tel" inputmode="decimal" id="inp-price" placeholder="السعر (مثال: 35.5)" required>
+            </div>
+            <div class="input-wrapper">
+                <input type="text" id="inp-area" placeholder="المنطقة" required>
+            </div>
+            <button type="submit" class="btn-main">حفظ الطلب ✨</button>
+        </form>
+    </div>
+
+    <div class="logs-container">
+        <div class="log-header">
+            <span>📦 طلبات اليوم</span>
+            <button onclick="openSettings()" style="background:none; border:none; color:#4f46e5; font-size:0.8rem; font-weight:bold;">⚙️ العمولة: <span id="comm-disp">1.500</span></button>
+        </div>
+        <div id="logs-list">
+            </div>
+    </div>
+</div>
+
+<div id="modal-scanner" class="modal">
+    <div class="modal-box" style="background: #111; color: white; border: 1px solid #333;">
+        <div class="scanner-view">
+            <video id="qr-video" playsinline muted></video>
+            <div class="scan-overlay"></div>
+            <div class="scan-line"></div>
+        </div>
+        <button onclick="stopScanner()" style="width:100%; padding:15px; background:#333; color:white; border:none; border-radius:12px; font-weight:bold;">إغلاق الكاميرا ✕</button>
+    </div>
+</div>
+
+<div id="modal-edit" class="modal">
+    <div class="modal-box">
+        <h3 style="margin-top:0">تعديل الطلب ✏️</h3>
+        <input type="hidden" id="edit-ts">
+        <div class="input-wrapper" style="margin-top:15px">
+            <input type="text" id="edit-rec" placeholder="رقم الوصل">
+        </div>
+        <div class="input-wrapper">
+            <input type="tel" inputmode="decimal" id="edit-pr" placeholder="السعر">
+        </div>
+        <div class="input-wrapper">
+            <input type="text" id="edit-ar" placeholder="المنطقة">
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button onclick="saveEdit()" class="btn-main" style="margin:0; background:var(--primary-gradient)">حفظ</button>
+            <button onclick="closeModal('modal-edit')" style="padding:15px; border-radius:18px; border:none; background:#f3f4f6; color:#333; font-weight:bold;">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-cal" class="modal">
+    <div class="modal-box">
+        <h3 style="margin-top:0">الأرشيف 📅</h3>
+        <input type="date" id="cal-inp" style="width:100%; padding:15px; background:#f9fafb; border:1px solid #ddd; border-radius:12px; margin:15px 0;">
+        <button onclick="selectDate()" class="btn-main" style="margin:0">عرض السجلات</button>
+        <button onclick="closeModal('modal-cal')" style="width:100%; margin-top:10px; background:none; border:none; color:#666;">إغلاق</button>
+    </div>
+</div>
+
+<script>
+// --- Core Logic ---
+let db, currentComm = 1500;
+let viewDate = new Date().toISOString().split('T')[0];
+let stream = null;
+
+// Helpers
+const $ = id => document.getElementById(id);
+const parseK = k => { const s = String(k).replace(/[^\d.]/g,''); return s.includes('.') ? (parseInt(s.split('.')[0])*1000 + parseInt(s.split('.')[1].padEnd(3,'0').substring(0,3))) : parseInt(s)*1000; };
+const fmt = p => { const v=Math.round(p||0); return `${Math.floor(v/1000)}.${String(v%1000).padStart(3,'0')}`; };
+const toggleModal = (id, show) => $(id).classList.toggle('active', show);
+const closeModal = id => toggleModal(id, false);
+
+// Init Date
+$('current-date').innerText = new Date().toLocaleDateString('ar-IQ', {weekday:'short', day:'numeric', month:'short'});
+
+// DB Setup
+const initDB = () => {
+    const r = indexedDB.open('DeliveryPremiumDB', 1);
+    r.onupgradeneeded = e => {
+        const d = e.target.result;
+        if(!d.objectStoreNames.contains('logs')) d.createObjectStore('logs', {keyPath:'timestamp'});
+        if(!d.objectStoreNames.contains('settings')) d.createObjectStore('settings', {keyPath:'key'});
+    };
+    r.onsuccess = e => { db = e.target.result; loadComm(); loadLogs(); };
+};
+
+// Data Handling
+const loadLogs = () => {
+    db.transaction('logs').objectStore('logs').getAll().onsuccess = e => {
+        const logs = e.target.result.sort((a,b) => b.timestamp - a.timestamp);
+        render(logs);
+    };
+};
+
+const render = (logs) => {
+    const today = logs.filter(l => l.dateISO === viewDate);
+    let totCol = 0, totNet = 0;
+
+    const html = today.map(l => {
+        totCol += (Number(l.price)||0);
+        totNet += (Number(l.netAmount)||0);
+        const isEdited = l.oldPrice && l.oldPrice !== l.price;
+        
+        return `
+        <div class="log-item ${isEdited ? 'edited' : ''}">
+            <div class="item-info">
+                <h4>
+                    ${isEdited ? '<span class="badge-edit">تعديل</span>' : ''}
+                    #${l.receiptNumber}
+                </h4>
+                <p>${l.area}</p>
+            </div>
+            
+            <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                <div class="price-box">
+                    <span class="price-main">${fmt(l.price)}</span>
+                    ${isEdited ? `<span class="price-old">${fmt(l.oldPrice)}</span>` : ''}
+                </div>
+                
+                <div class="actions">
+                    <button onclick="openEdit(${l.timestamp})" class="action-btn btn-edit">
+                        <svg viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        تعديل
+                    </button>
+                    <button onclick="deleteLog(${l.timestamp})" class="action-btn btn-delete">
+                        <svg viewBox="0 0 24 24" style="width:14px;height:14px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        حذف
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+
+    $('logs-list').innerHTML = html || '<div style="padding:40px; text-align:center; color:#ccc">لا توجد طلبات مسجلة</div>';
+    $('total-collected').innerText = fmt(totCol);
+    $('total-net').innerText = fmt(totNet);
+};
+
+// Actions
+const saveLog = (data) => {
+    const tx = db.transaction(['logs'], 'readwrite');
+    tx.objectStore('logs').put(data);
+    tx.oncomplete = () => { loadLogs(); $('delivery-form').reset(); };
+};
+
+$('delivery-form').onsubmit = e => {
+    e.preventDefault();
+    const p = parseK($('inp-price').value);
+    if(!p) return;
+    saveLog({
+        timestamp: Date.now(), dateISO: viewDate,
+        receiptNumber: $('inp-receipt').value,
+        price: p, area: $('inp-area').value,
+        commission: currentComm, netAmount: p - currentComm
+    });
+};
+
+// Edit & Delete
+const openEdit = ts => {
+    db.transaction('logs').objectStore('logs').get(ts).onsuccess = e => {
+        const l = e.target.result;
+        $('edit-ts').value = l.timestamp;
+        $('edit-rec').value = l.receiptNumber;
+        $('edit-pr').value = l.price / 1000;
+        $('edit-ar').value = l.area;
+        toggleModal('modal-edit', true);
+    };
+};
+
+const saveEdit = () => {
+    const ts = Number($('edit-ts').value);
+    const np = parseK($('edit-pr').value);
+    
+    const tx = db.transaction(['logs'], 'readwrite');
+    const st = tx.objectStore('logs');
+    st.get(ts).onsuccess = e => {
+        const l = e.target.result;
+        if(l.price !== np) l.oldPrice = l.price;
+        l.receiptNumber = $('edit-rec').value;
+        l.area = $('edit-ar').value;
+        l.price = np;
+        l.netAmount = np - l.commission;
+        st.put(l);
+    };
+    tx.oncomplete = () => { closeModal('modal-edit'); loadLogs(); };
+};
+
+const deleteLog = ts => {
+    if(confirm('هل أنت متأكد من حذف هذا الطلب نهائياً؟ 🗑️')) {
+        const tx = db.transaction(['logs'], 'readwrite');
+        tx.objectStore('logs').delete(ts);
+        tx.oncomplete = () => loadLogs();
+    }
+};
+
+// Scanner
+async function startScanner() {
+    if (!('BarcodeDetector' in window)) { alert("الماسح غير مدعوم في هذا المتصفح"); return; }
+    toggleModal('modal-scanner', true);
+    const vid = $('qr-video');
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        vid.srcObject = stream;
+        await vid.play();
+        const det = new BarcodeDetector();
+        const loop = setInterval(async () => {
+            if(vid.readyState === 4) {
+                try {
+                    const b = await det.detect(vid);
+                    if(b.length) {
+                        $('inp-receipt').value = b[0].rawValue;
+                        navigator.vibrate(200);
+                        stopScanner();
+                    }
+                } catch(e){}
+            }
+        }, 200);
+        window.scanInt = loop;
+    } catch(e) { stopScanner(); alert("الكاميرا محجوبة"); }
+}
+
+const stopScanner = () => {
+    toggleModal('modal-scanner', false);
+    if(stream) stream.getTracks().forEach(t => t.stop());
+    clearInterval(window.scanInt);
+};
+
+// Misc
+const openSettings = () => {
+    const v = prompt('العمولة الجديدة:', currentComm/1000);
+    if(v) {
+        const c = parseK(v);
+        db.transaction(['settings'], 'readwrite').objectStore('settings').put({key:'commission', value:c});
+        currentComm = c; $('comm-disp').innerText = fmt(c);
+    }
+};
+const loadComm = () => db.transaction('settings').objectStore('settings').get('commission').onsuccess = e => { if(e.target.result) { currentComm = e.target.result.value; $('comm-disp').innerText = fmt(currentComm); }};
+const startNewDay = () => { if(confirm('بدء يوم جديد؟')) { viewDate = new Date().toISOString().split('T')[0]; $('delivery-form').reset(); loadLogs(); } };
+const openCalendar = () => toggleModal('modal-cal', true);
+const selectDate = () => { viewDate = $('cal-inp').value; loadLogs(); closeModal('modal-cal'); };
+
+initDB();
+</script>
+</body>
+</html>
